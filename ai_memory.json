@@ -1,0 +1,56 @@
+{
+  "Danilo": {
+    "wins": 0,
+    "losses": 1,
+    "draws": 0,
+    "lastOutcome": "win"
+  },
+  "Ada Lovelace": {
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "lastOutcome": "lose"
+  },
+  "Marie Curie": {
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "lastOutcome": "lose"
+  },
+  "Joana d'Arc": {
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "lastOutcome": "lose"
+  },
+  "Einstein": {
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "lastOutcome": "lose"
+  },
+  "Newton": {
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "lastOutcome": "lose"
+  },
+  "Mandela": {
+    "wins": 1,
+    "losses": 0,
+    "draws": 0,
+    "lastOutcome": "lose"
+  },
+  "Iguinho2.0": {
+    "wins": 0,
+    "losses": 1,
+    "draws": 1,
+    "lastOutcome": "win"
+  },
+  "Frida Kahlo": {
+    "wins": 0,
+    "losses": 1,
+    "draws": 0,
+    "lastOutcome": "win"
+  }
+}
