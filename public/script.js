@@ -15,6 +15,7 @@ const myRoleDisplay = getEl('my-role');
 const turnDisplay = getEl('current-turn');
 const statusMsg = getEl('status-msg');
 const menu = getEl('menu');
+const gameWrapper = getEl('game-wrapper'); // NOVO CONTAINER DO JOGO
 const restartBtn = getEl('restart-btn');
 const aiLevelSelect = getEl('ai-level');
 const roomInput = getEl('room-name'); 
@@ -87,6 +88,7 @@ window.joinSpecificRoom = function(rName) {
 window.watchRoom = function(roomId, roomNameDisplay) {
     myNickname = promptForNickname();
     menu.classList.add('hidden');
+    gameWrapper.classList.remove('hidden'); // MOSTRA O JOGO
     restartBtn.classList.remove('hidden');
     chatPanel.classList.remove('hidden');
     createBoard();
@@ -117,9 +119,10 @@ window.startGame = function(mode) {
     gameMode = mode;
     aiDifficulty = aiLevelSelect.value;
     isSpectator = false;
-    document.body.classList.remove('urgent-turn'); // Limpa alerta
+    document.body.classList.remove('urgent-turn');
     
     menu.classList.add('hidden');
+    gameWrapper.classList.remove('hidden'); // MOSTRA O JOGO
     restartBtn.classList.remove('hidden');
     createBoard();
     isGameActive = true;
@@ -152,7 +155,7 @@ window.startGame = function(mode) {
         statusMsg.innerText = myRole === 'X' ? "Sua vez!" : `Vez da ${botName}...`;
         chatPanel.classList.add('hidden');
         updateTurnDisplay();
-        updateVisuals(); // Atualiza visual inicial (pode disparar alerta se for X)
+        updateVisuals();
 
         if(socket) {
             currentRoom = `ai_game_${socket.id}`;
@@ -368,7 +371,7 @@ function checkBigGameWin(player) {
 
 function showGameOver(winner) {
     isGameActive = false;
-    document.body.classList.remove('urgent-turn'); // Remove alerta ao fim do jogo
+    document.body.classList.remove('urgent-turn');
     
     const modal = getEl('game-over-modal');
     const modalContent = modal.querySelector('.modal-content');
@@ -463,7 +466,6 @@ function updateTurnDisplay() { turnDisplay.innerText = `${currentTurn} (${player
 function updateVisuals() {
     Array.from(gameContainer.children).forEach(b => b.classList.remove('active-target'));
     
-    // Lógica do Alerta de Turno
     document.body.classList.remove('urgent-turn');
     if (isGameActive && !isSpectator && currentTurn === myRole) {
         document.body.classList.add('urgent-turn');

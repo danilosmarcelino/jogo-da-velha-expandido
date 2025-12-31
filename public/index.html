@@ -5,77 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo da Velha Expandido</title>
     
-    <!-- Fontes estilo GTA / Action -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Russo+One&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    
+    <!-- SEU CÓDIGO DO ADSENSE -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9263955390319775"
+     crossorigin="anonymous"></script>
 </head>
 <body>
 
-    <!-- O ID menu permite rolagem para evitar problemas de zoom -->
-    <div id="menu">
-        <div class="gta-panel">
-            <h1 class="gta-title">JOGO DA VELHA<br><span style="color:#fff">EXPANDIDO</span></h1>
-            <p class="gta-subtitle">MULTIPLAYER & IA</p>
-
-            <!-- MODO ONLINE -->
-            <div class="menu-section">
-                <label>SESSÃO ONLINE</label>
-                <input type="text" id="room-name" placeholder="NOME DA GANGUE (SALA)" value="groove_st">
-                <button onclick="startGame('online')" class="btn-green">ENTRAR NA SESSÃO</button>
+    <!-- LAYOUT PRINCIPAL (3 COLUNAS) -->
+    <div class="main-layout">
+        
+        <!-- ANÚNCIO ESQUERDA -->
+        <aside class="ad-sidebar left-ad">
+            <div class="ad-container">
+                <p class="ad-label">PUBLICIDADE</p>
+                <!-- 
+                     DICA: Crie um "Bloco de Anúncio Vertical" no AdSense 
+                     e cole o código <ins>...</ins> aqui para garantir que apareça aqui.
+                -->
             </div>
+        </aside>
 
-            <!-- LISTA DE SALAS -->
-            <div id="painel-salas" class="menu-section">
-                <label style="display:flex; justify-content:space-between; align-items:center;">
-                    SERVIDORES ATIVOS
-                    <button onclick="requestRoomList()" class="refresh-btn">↻</button>
-                </label>
-                <div id="room-list-container">
-                    <p style="color: #555; font-size: 14px; text-align: center;">BUSCANDO SINAL...</p>
+        <!-- ÁREA CENTRAL (JOGO E MENU) -->
+        <main class="game-area">
+            
+            <!-- MENU PRINCIPAL -->
+            <div id="menu">
+                <div class="gta-panel">
+                    <h1 class="gta-title">JOGO DA VELHA<br><span style="color:#fff">EXPANDIDO</span></h1>
+                    <p class="gta-subtitle">MULTIPLAYER & IA</p>
+
+                    <div class="menu-section">
+                        <label>SESSÃO ONLINE</label>
+                        <input type="text" id="room-name" placeholder="NOME DA GANGUE (SALA)" value="groove_st">
+                        <button onclick="startGame('online')" class="btn-green">ENTRAR NA SESSÃO</button>
+                    </div>
+
+                    <div id="painel-salas" class="menu-section">
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                            SERVIDORES ATIVOS
+                            <button onclick="requestRoomList()" class="refresh-btn">↻</button>
+                        </label>
+                        <div id="room-list-container">
+                            <p style="color: #555; font-size: 14px; text-align: center;">BUSCANDO SINAL...</p>
+                        </div>
+                    </div>
+
+                    <div class="menu-section ai-section">
+                        <label style="color: #f1c40f;">DESAFIE A MÁQUINA</label>
+                        <input type="text" id="player-nickname-ai" placeholder="SEU VULGO" maxlength="10">
+                        <label class="input-label">NÍVEL DE PROCURADO:</label>
+                        <select id="ai-level">
+                            <option value="easy">⭐ (FÁCIL)</option>
+                            <option value="hard">⭐⭐⭐ (DIFÍCIL)</option>
+                            <option value="god">⭐⭐⭐⭐⭐ (IMPOSSÍVEL)</option>
+                        </select>
+                        <label class="input-label">ESCOLHA SEU LADO:</label>
+                        <select id="player-symbol-choice">
+                            <option value="X">X (VOCÊ COMEÇA)</option>
+                            <option value="O">O (IA COMEÇA)</option>
+                        </select>
+                        <button onclick="startGame('ai')" class="btn-orange">INICIAR MISSÃO</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- MODO IA -->
-            <div class="menu-section ai-section">
-                <label style="color: #f1c40f;">DESAFIE A MÁQUINA</label>
-                <input type="text" id="player-nickname-ai" placeholder="SEU VULGO" maxlength="10">
-                
-                <label class="input-label">NÍVEL DE PROCURADO:</label>
-                <select id="ai-level">
-                    <option value="easy">⭐ (FÁCIL)</option>
-                    <option value="hard">⭐⭐⭐ (DIFÍCIL)</option>
-                    <option value="god">⭐⭐⭐⭐⭐ (IMPOSSÍVEL)</option>
-                </select>
-                
-                <label class="input-label">ESCOLHA SEU LADO:</label>
-                <select id="player-symbol-choice">
-                    <option value="X">X (VOCÊ COMEÇA)</option>
-                    <option value="O">O (IA COMEÇA)</option>
-                </select>
-                <button onclick="startGame('ai')" class="btn-orange">INICIAR MISSÃO</button>
+            <!-- JOGO (HUD + TABULEIRO) -->
+            <div id="game-wrapper" class="hidden">
+                <div class="info-panel">
+                    <div class="hud-bar">
+                        <div class="hud-item">SALA: <span id="room-display" style="color:#3498db">OFFLINE</span></div>
+                        <div class="hud-item">PLAYER: <span id="my-role" style="color:#fff">...</span></div>
+                        <div class="hud-item">TURNO: <span id="current-turn" style="color:#f1c40f">X</span></div>
+                    </div>
+                    <p id="status-msg">AGUARDANDO INÍCIO...</p>
+                    <button id="restart-btn" class="hidden btn-red" onclick="location.reload()">ABANDONAR MISSÃO</button>
+                </div>
+
+                <div id="game-container"></div>
             </div>
-        </div>
+
+        </main>
+
+        <!-- ANÚNCIO DIREITA -->
+        <aside class="ad-sidebar right-ad">
+            <div class="ad-container">
+                <p class="ad-label">PUBLICIDADE</p>
+                <!-- 
+                     DICA: Cole o código do segundo bloco de anúncio aqui.
+                -->
+            </div>
+        </aside>
+
     </div>
 
-    <!-- PAINEL DE INFORMAÇÕES (HUD) -->
-    <div class="info-panel">
-        <div class="hud-bar">
-            <div class="hud-item">SALA: <span id="room-display" style="color:#3498db">OFFLINE</span></div>
-            <div class="hud-item">PLAYER: <span id="my-role" style="color:#fff">...</span></div>
-            <div class="hud-item">TURNO: <span id="current-turn" style="color:#f1c40f">X</span></div>
-        </div>
-        <p id="status-msg">AGUARDANDO INÍCIO...</p>
-        <button id="restart-btn" class="hidden btn-red" onclick="location.reload()">ABANDONAR MISSÃO</button>
-    </div>
-
-    <!-- TABULEIRO -->
-    <div id="game-container"></div>
-
-    <!-- CHAT -->
+    <!-- CHAT (FLUTUANTE) -->
     <div id="chat-panel" class="menu-section hidden chat-hud">
         <label>MENSAGENS</label>
         <div id="chat-messages"></div>
@@ -85,7 +114,7 @@
         </div>
     </div>
 
-    <!-- MODAL FIM DE JOGO (MISSION PASSED / WASTED) -->
+    <!-- MODAL FINAL DE JOGO -->
     <div id="game-over-modal" class="hidden">
         <div class="modal-content gta-modal">
             <h2 id="end-title">MISSION PASSED</h2>
